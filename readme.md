@@ -1,3 +1,5 @@
+![](https://i.imgur.com/6JVB5S6.gif])
+
 ```jsx
 import React, { useState, useEffect } from 'react'
 import { Illustration, Ellipse, Shape } from 'react-zdog'
