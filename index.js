@@ -1,4 +1,4 @@
-import * as Zdog from 'zdog'
+import Zdog from 'zdog'
 import React, { useContext, useRef, useEffect, useLayoutEffect, useState, useImperativeHandle } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 

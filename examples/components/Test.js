@@ -2,9 +2,6 @@ import * as ZDOG from 'zdog'
 import React, { useState, useEffect, useRef } from 'react'
 import { Illustration, Ellipse, Shape, Group, useRender } from 'react-zdog'
 
-import * as b from 'react-zdog'
-console.log(b)
-
 function Content() {
   const [visible, setVisible] = useState(true)
   useEffect(() => {
