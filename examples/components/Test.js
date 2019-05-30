@@ -1,16 +1,12 @@
-import * as ZDOG from 'zdog'
-import React, { useState, useEffect } from 'react'
-import { Illustration, Ellipse, Shape } from 'react-zdog'
+import React, { useState, useEffect, useRef } from 'react'
+import { Illustration, Ellipse, Shape, Group, useRender } from 'react-zdog'
 
-export default function Content() {
-  const [visible, setVisible] = useState(true)
-  useEffect(() => {
-    // Test taking an object away
-    setTimeout(() => setVisible(false), 1000)
-  }, [])
+function Content() {
+  const group = useRef()
+  useRender(() => (group.current.rotate.y += 0.1))
 
   return (
-    <Illustration zoom={10}>
+    <Group ref={group}>
       <Shape
         path={[{ x: 0, y: -8 }, { x: 8, y: 8 }, { x: -8, y: 8 }]}
         translate={{ z: 10 }}
@@ -18,7 +14,15 @@ export default function Content() {
         stroke={3}
         fill
       />
-      {visible && <Ellipse diameter={20} translate={{ z: -10 }} stroke={5} color="#636" />}
+      <Ellipse diameter={20} translate={{ z: -10 }} stroke={5} color="#636" />
+    </Group>
+  )
+}
+
+export default function App() {
+  return (
+    <Illustration zoom={10}>
+      <Content />
     </Illustration>
   )
 }
