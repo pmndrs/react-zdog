@@ -1,7 +1,17 @@
+import * as ZDOG from 'zdog'
 import React, { useState, useEffect, useRef } from 'react'
 import { Illustration, Ellipse, Shape, Group, useRender } from 'react-zdog'
 
+import * as b from 'react-zdog'
+console.log(b)
+
 function Content() {
+  const [visible, setVisible] = useState(true)
+  useEffect(() => {
+    // Test taking an object away
+    setTimeout(() => setVisible(false), 1000)
+  }, [])
+
   const group = useRef()
   useRender(() => (group.current.rotate.y += 0.1))
 
@@ -14,7 +24,7 @@ function Content() {
         stroke={3}
         fill
       />
-      <Ellipse diameter={20} translate={{ z: -10 }} stroke={5} color="#636" />
+      {visible && <Ellipse diameter={20} translate={{ z: -10 }} stroke={5} color="#636" />}
     </Group>
   )
 }

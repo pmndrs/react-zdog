@@ -2,8 +2,8 @@ import * as Zdog from 'zdog'
 import React, { useContext, useRef, useEffect, useLayoutEffect, useState, useImperativeHandle } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 
-export const illuContext = React.createContext()
-export const parentContext = React.createContext()
+const illuContext = React.createContext()
+const parentContext = React.createContext()
 
 function useMeasure() {
   const ref = useRef()
@@ -16,7 +16,7 @@ function useMeasure() {
   return [{ ref }, bounds]
 }
 
-export function useRender(fn, deps = []) {
+function useRender(fn, deps = []) {
   const { subscribe } = useContext(illuContext)
   useEffect(() => {
     // Subscribe to the render-loop
@@ -36,17 +36,19 @@ function useZdog(primitive, children, props, ref) {
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
-      //illu.updateRenderGraph()
+      //illu.node.updateGraph()
       return () => {
         node.remove()
-        //illu.updateRenderGraph()
+        // Doesn't work :(
+        illu.node.updateGraph()
+        illu.node.updateFlatGraph()
       }
     }
   }, [parent])
   return [<parentContext.Provider value={node} children={children} />, node]
 }
 
-export const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest }) => {
+const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest }) => {
   const canvas = useRef()
   const canvasRef = useRef()
   const [bind, size] = useMeasure()
@@ -113,26 +115,33 @@ export const Illustration = React.memo(({ children, config, style, zoom = 1, ...
   )
 })
 
-export const Anchor = React.memo(({ children, ...rest }) => {
-  const [bind, size] = useMeasure()
-  const [result] = useZdog(Zdog.Anchor, children, rest)
-  return result
-})
+const createZdog = primitive =>
+  React.forwardRef(({ children, ...rest }, ref) => useZdog(primitive, children, rest, ref)[0])
 
-export const Ellipse = React.memo(({ children, ...rest }) => {
-  const [bind, size] = useMeasure()
-  const [result] = useZdog(Zdog.Ellipse, children, rest)
-  return result
-})
+const Anchor = createZdog(Zdog.Anchor)
+const Shape = createZdog(Zdog.Shape)
+const Group = createZdog(Zdog.Group)
+const Rect = createZdog(Zdog.Rect)
+const RoundedRect = createZdog(Zdog.RoundedRect)
+const Ellipse = createZdog(Zdog.Ellipse)
+const Polygon = createZdog(Zdog.Polygon)
+const Hemisphere = createZdog(Zdog.Hemisphere)
+const Cylinder = createZdog(Zdog.Cylinder)
+const Cone = createZdog(Zdog.Cone)
+const Box = createZdog(Zdog.Box)
 
-export const Shape = React.memo(({ children, ...rest }) => {
-  const [bind, size] = useMeasure()
-  const [result] = useZdog(Zdog.Shape, children, rest)
-  return result
-})
-
-export const Group = React.forwardRef(({ children, ...rest }, ref) => {
-  const [bind, size] = useMeasure()
-  const [result] = useZdog(Zdog.Group, children, rest, ref)
-  return result
-})
+export {
+  Illustration,
+  useRender,
+  Anchor,
+  Shape,
+  Group,
+  Rect,
+  RoundedRect,
+  Ellipse,
+  Polygon,
+  Hemisphere,
+  Cylinder,
+  Cone,
+  Box,
+}
