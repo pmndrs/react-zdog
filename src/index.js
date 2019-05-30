@@ -26,7 +26,10 @@ function useZdog(primitive, children, props, initial = () => undefined) {
       window.node = node
       parent.addChild(node)
       illu.updateRenderGraph()
-      return () => parent.removeChild(node)
+      return () => {
+        parent.removeChild(node)
+        illu.updateRenderGraph()
+      }
     }
   }, [node, parent])
   return [node ? <parentContext.Provider value={node} children={children} /> : null, node]
