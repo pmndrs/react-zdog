@@ -1,7 +1,8 @@
 import * as Zdog from 'zdog'
 import React, { useContext, useRef, useEffect, useLayoutEffect, useState } from 'react'
 
-export const parentContent = React.createContext()
+export const illuContext = React.createContext()
+export const parentContext = React.createContext()
 
 function useMeasure() {
   const ref = useRef()
@@ -16,16 +17,19 @@ function useMeasure() {
 
 function useZdog(primitive, children, props, initial = () => undefined) {
   const [node, setNode] = useState()
-  const parent = useContext(parentContent)
+  const illu = useContext(illuContext)
+  const parent = useContext(parentContext)
   useLayoutEffect(() => node && void Zdog.extend(node, props))
   useLayoutEffect(() => void setNode(new primitive({ ...initial(), ...props })), [])
   useLayoutEffect(() => {
     if (node && parent) {
+      window.node = node
       parent.addChild(node)
+      illu.updateRenderGraph()
       return () => parent.removeChild(node)
     }
   }, [node, parent])
-  return [node ? <parentContent.Provider value={node} children={children} /> : null, node]
+  return [node ? <parentContext.Provider value={node} children={children} /> : null, node]
 }
 
 export const Illustration = React.memo(({ children, config, style, ...rest }) => {
@@ -33,7 +37,7 @@ export const Illustration = React.memo(({ children, config, style, ...rest }) =>
   const [bind, size] = useMeasure()
   const [result, node] = useZdog(Zdog.Illustration, children, rest, () => ({ element: canvas.current }))
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (node) {
       function animate() {
         node.updateRenderGraph()
@@ -41,7 +45,7 @@ export const Illustration = React.memo(({ children, config, style, ...rest }) =>
       }
       animate()
     }
-  }, [node])
+  }, [node])*/
 
   return (
     <div
@@ -49,7 +53,7 @@ export const Illustration = React.memo(({ children, config, style, ...rest }) =>
       {...rest}
       style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
       <canvas ref={canvas} style={{ display: 'block', width: '100%', height: '100%' }} />
-      {result}
+      {node && <illuContext.Provider value={node} children={result} />}
     </div>
   )
 })
