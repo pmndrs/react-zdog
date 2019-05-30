@@ -73,9 +73,9 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
   }, [])
 
   useEffect(() => {
-    function animate() {
-      node.updateGraph()
-      render()
+    function animate(t) {
+      node.update()
+      render(t)
       requestAnimationFrame(animate)
     }
 
@@ -85,10 +85,8 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
         // clear canvas
         canvas.current.clearRect(0, 0, size.width, size.height)
         canvas.current.save()
-
         // Run local effects
         subscribers.forEach(fn => fn(t))
-
         // center canvas & zoom
         canvas.current.translate(size.width / 2, size.height / 2)
         canvas.current.scale(zoom, zoom)
