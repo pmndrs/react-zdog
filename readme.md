@@ -1,6 +1,6 @@
     npm install react-zdog
     
-This is a super early preview for [zdog](zzz.dog) in React.
+This is a super early preview for [zdog](https://zzz.dog/) in React.
 
 Demo: https://codesandbox.io/s/nervous-feather-vk9uh
 
