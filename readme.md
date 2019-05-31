@@ -33,8 +33,8 @@ export default function Content() {
 
 ### Coming soon ...
 
-Probably making the lenghty vectors shorter:
+Probably making the verbose vectors shorter:
 
 ```jsx
-<Shape path={[[0, -8], [8, 8], [-8, 8]]} translate={[0, 0, 10]} color="#E62" stroke={3} fill />
+<Shape path={[[0, -8], [8, 8], [-8, 8]]} translate={[0, 0, 10]} stroke={3} fill />
 ```
