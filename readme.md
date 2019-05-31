@@ -1,4 +1,6 @@
-Too early for npm, but you can clone and run the examples locally
+    npm install react-zdog
+    
+Demo: https://codesandbox.io/s/nervous-feather-vk9uh
 
 ![](https://i.imgur.com/6JVB5S6.gif])
 
