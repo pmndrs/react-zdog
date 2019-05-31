@@ -9,6 +9,9 @@
     "prebuild": "rimraf dist",
     "build": "rollup -c",
     "prepare": "npm run build",
+    "format": "prettier --write src/**/*",
+    "lint": "eslint src -c .eslintrc --ext js,jsx",
+    "lint-check": "eslint --print-config . | eslint-config-prettier-check",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "husky": {
@@ -20,14 +23,12 @@
     "semi": false,
     "trailingComma": "es5",
     "singleQuote": true,
-    "jsxBracketSameLine": true,
     "tabWidth": 2,
     "printWidth": 120
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "git add"
+      "npm run lint"
     ]
   },
   "repository": {
@@ -76,6 +77,13 @@
     "@types/react": "^16.8.15",
     "babel-eslint": "^10.0.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.13.0",
     "husky": "^2.1.0",
     "lint-staged": "^8.1.5",
     "prettier": "^1.17.0",

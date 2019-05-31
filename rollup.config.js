@@ -2,7 +2,7 @@ import path from 'path'
 import babel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
+// import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 
 const root = process.platform === 'win32' ? path.resolve('/') : '/'
 const external = id => !id.includes('zdog') && !id.startsWith('.') && !id.startsWith(root)
@@ -11,7 +11,7 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const getBabelOptions = ({ useESModules }, targets) => ({
   babelrc: false,
   extensions,
-  //exclude: '**/node_modules/**',
+  // exclude: '**/node_modules/**',
   runtimeHelpers: true,
   presets: [
     ['@babel/preset-env', { loose: true, modules: false, targets }],
@@ -55,4 +55,4 @@ function createConfig(entry, out) {
   ]
 }
 
-export default [...createConfig('index', 'index')]
+export default [...createConfig('src/index', 'index')]

@@ -7,7 +7,12 @@ const parentContext = React.createContext()
 
 function useMeasure() {
   const ref = useRef()
-  const [bounds, set] = useState({ left: 0, top: 0, width: 0, height: 0 })
+  const [bounds, set] = useState({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+  })
   const [ro] = useState(() => new ResizeObserver(([entry]) => set(entry.contentRect)))
   useEffect(() => {
     if (ref.current) ro.observe(ref.current)
@@ -26,10 +31,10 @@ function useRender(fn, deps = []) {
   }, deps)
 }
 
-function useZdog(primitive, children, props, ref) {
+function useZdog(Primitive, children, props, ref) {
   const illu = useContext(illuContext)
   const parent = useContext(parentContext)
-  const [node] = useState(() => new primitive(props))
+  const [node] = useState(() => new Primitive(props))
 
   useImperativeHandle(ref, () => node)
   useLayoutEffect(() => void Zdog.extend(node, props))
@@ -45,8 +50,10 @@ function useZdog(primitive, children, props, ref) {
         illu.current.node.updateGraph()
       }
     }
+
+    return () => void 0
   }, [parent])
-  return [<parentContext.Provider value={node} children={children} />, node]
+  return [<parentContext.Provider value={node}>{children}</parentContext.Provider>, node]
 }
 
 const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest }) => {
@@ -62,7 +69,10 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
     subscribers: [],
     subscribe: fn => {
       state.current.subscribers.push(fn)
-      return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
+      return () => {
+        state.current.subscribers = state.current.subscribers.filter(s => s !== fn)
+        return state.current.subscribers
+      }
     },
   })
   useEffect(() => {
@@ -75,12 +85,6 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
   }, [])
 
   useEffect(() => {
-    function animate(t) {
-      node.updateGraph()
-      render(t)
-      requestAnimationFrame(animate)
-    }
-
     function render(t) {
       const { size, zoom, subscribers } = state.current
       if (size.width && size.height && zoom) {
@@ -101,6 +105,12 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
       }
     }
 
+    function animate(t) {
+      node.updateGraph()
+      render(t)
+      requestAnimationFrame(animate)
+    }
+
     animate()
   }, [])
 
@@ -108,9 +118,16 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
     <div
       ref={bind.ref}
       {...rest}
-      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
       <canvas ref={canvasRef} style={{ display: 'block' }} width={size.width} height={size.height} />
-      <illuContext.Provider value={state} children={result} />
+      <illuContext.Provider value={state}>{result}</illuContext.Provider>
     </div>
   )
 })
