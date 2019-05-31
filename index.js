@@ -17,10 +17,10 @@ function useMeasure() {
 }
 
 function useRender(fn, deps = []) {
-  const { subscribe } = useContext(illuContext)
+  const illu = useContext(illuContext)
   useEffect(() => {
     // Subscribe to the render-loop
-    const unsubscribe = subscribe(fn)
+    const unsubscribe = illu.current.subscribe(fn)
     // Call subscription off on unmount
     return () => unsubscribe()
   }, deps)
@@ -36,12 +36,13 @@ function useZdog(primitive, children, props, ref) {
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
-      //illu.node.updateGraph()
+      illu.current.node.updateFlatGraph()
+      illu.current.node.updateGraph()
       return () => {
-        node.remove()
-        // Doesn't work :(
-        illu.node.updateGraph()
-        illu.node.updateFlatGraph()
+        parent.removeChild(node)
+        parent.updateFlatGraph()
+        illu.current.node.updateFlatGraph()
+        illu.current.node.updateGraph()
       }
     }
   }, [parent])
@@ -55,6 +56,7 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
   const [result, node] = useZdog(Zdog.Anchor, children, rest)
 
   const state = useRef({
+    node,
     size: {},
     zoom: 1,
     subscribers: [],
@@ -74,7 +76,7 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
 
   useEffect(() => {
     function animate(t) {
-      node.update()
+      node.updateGraph()
       render(t)
       requestAnimationFrame(animate)
     }
@@ -108,7 +110,7 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
       {...rest}
       style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
       <canvas ref={canvasRef} style={{ display: 'block' }} width={size.width} height={size.height} />
-      <illuContext.Provider value={{ node, ...state.current }} children={result} />
+      <illuContext.Provider value={state} children={result} />
     </div>
   )
 })
