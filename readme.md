@@ -1,32 +1,15 @@
     npm install react-zdog
     
+This is a super early preview for [zdog](https://zzz.dog/) in React.
+
 Demo: https://codesandbox.io/s/nervous-feather-vk9uh
 
 ![](https://i.imgur.com/6JVB5S6.gif])
 
+### Coming soon ...
+
+Probably making the verbose vectors shorter:
+
 ```jsx
-import React, { useState, useEffect } from 'react'
-import { Illustration, Ellipse, Shape } from 'react-zdog'
-
-export default function Content() {
-  const [visible, setVisible] = useState(true)
-  useEffect(() => {
-    // Test taking an object away
-    setTimeout(() => setVisible(false), 1000)
-  }, [])
-
-  return (
-    <Illustration zoom={10}>
-      <Shape
-        path={[{ x: 0, y: -8 }, { x: 8, y: 8 }, { x: -8, y: 8 }]}
-        translate={{ z: 10 }}
-        color="#E62"
-        stroke={3}
-        fill
-      />
-      {visible && <Ellipse diameter={20} translate={{ z: -10 }} stroke={5} color="#636" />}
-    </Illustration>
-  )
-}
-
+<Shape path={[[0, -8], [8, 8], [-8, 8]]} translate={[0, 0, 10]} stroke={3} fill />
 ```
