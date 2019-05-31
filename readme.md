@@ -4,7 +4,7 @@ This is a super early preview for [zdog](https://zzz.dog/) in React.
 
 Demo: https://codesandbox.io/s/nervous-feather-vk9uh
 
-![](https://i.imgur.com/6JVB5S6.gif])
+![](https://imgur.com/YqSqht7.gif)
 
 ### Coming soon ...
 
