@@ -1,4 +1,4 @@
-Too early for npm, but you can clone and run the examples locally
+    npm install react-zdog
 
 ![](https://i.imgur.com/6JVB5S6.gif])
 
