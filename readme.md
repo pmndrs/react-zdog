@@ -1,3 +1,11 @@
+<p align="center">
+  <img src="https://imgur.com/THk95vU.png" width="240" />
+</p>
+
+<br />
+<br />
+<br />
+
     npm install react-zdog
     
 This is a super early preview for [zdog](https://zzz.dog/) in React.
