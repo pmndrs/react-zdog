@@ -59,6 +59,8 @@ module.exports = mode => {
         'prop-types': path.resolve('node_modules/prop-types'),
         lodash: path.resolve('../node_modules/lodash-es'),
         'lodash-es': path.resolve('../node_modules/lodash-es'),
+        zdog: path.resolve('../node_modules/zdog/js/index'),
+        'react-spring/zdog': createAlias('react-spring/src/targets/zdog', 'react-spring/zdog'),
       },
     },
     optimization: {

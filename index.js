@@ -5,6 +5,19 @@ import ResizeObserver from 'resize-observer-polyfill'
 const illuContext = React.createContext()
 const parentContext = React.createContext()
 
+let globalEffects = []
+export function addEffect(callback) {
+  globalEffects.push(callback)
+}
+
+export function invalidate() {
+  // TODO: render loop has to be able to render frames on demand
+}
+
+export function applyProps(instance, newProps, oldProps = {}, accumulative = false) {
+  Zdog.extend(instance, newProps)
+}
+
 function useMeasure() {
   const ref = useRef()
   const [bounds, set] = useState({ left: 0, top: 0, width: 0, height: 0 })
@@ -87,6 +100,8 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
         // clear canvas
         canvas.current.clearRect(0, 0, size.width, size.height)
         canvas.current.save()
+        // Run global effects
+        globalEffects.forEach(fn => fn(t))
         // Run local effects
         subscribers.forEach(fn => fn(t))
         // center canvas & zoom
