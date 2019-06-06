@@ -4,7 +4,7 @@
 
     npm install zdog react-zdog
     
-react-zdog is a declarative abstraction of [zdog](https://zzz.dog/), a cute pseudo 3d engine. Doing zdog in React allows you to break up your scene graph into declarative, re-usable components with clean, reactive semantics. Try a live demo [here](https://codesandbox.io/s/nervous-feather-vk9uh).
+react-zdog is a declarative abstraction of [zdog](https://zzz.dog/), a cute pseudo 3d-engine. Doing zdog in React allows you to break up your scene graph into declarative, re-usable components with clean, reactive semantics. Try a live demo [here](https://codesandbox.io/s/nervous-feather-vk9uh).
 
 # How it looks like
 
@@ -23,7 +23,7 @@ ReactDOM.render(
 
 # Api
 
-Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered.
+Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. It basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
 
 # Hooks
 
