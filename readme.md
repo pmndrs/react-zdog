@@ -23,7 +23,7 @@ ReactDOM.render(
 
 # Api
 
-Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. It basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
+Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. react-zdog basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
 
 # Hooks
 
