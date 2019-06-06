@@ -4,16 +4,38 @@
 
     npm install react-zdog
     
-This is a super early preview for [zdog](https://zzz.dog/) in React.
+react-zdog is a declarative abstraction of [zdog](https://zzz.dog/), a cute pseudo 3d engine. Doing zdog in React allows you break up your scene graph into declarative, re-usable components with clean, reactive semantics. Try a live demo [here](https://codesandbox.io/s/nervous-feather-vk9uh).
 
-Demo: https://codesandbox.io/s/nervous-feather-vk9uh
-
-![](https://imgur.com/YqSqht7.gif)
-
-### Coming soon ...
-
-Probably making the verbose vectors shorter:
+# How it looks like
 
 ```jsx
-<Shape path={[[0, -8], [8, 8], [-8, 8]]} translate={[0, 0, 10]} stroke={3} fill />
+import ReactDOM from 'react-dom'
+import React from 'react'
+import { Illustration, Shape } from 'react-zdog'
+
+ReactDOM.render(
+  <Illustration zoom={8}>
+    <Shape stroke={20} color="lightblue" />
+  </Illustration>,
+  document.getElementById('root')
+)
+```
+
+# Api
+
+Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered.
+
+# Hooks
+
+All hooks can only be used *inside* the Illustration element because they rely on context updates!
+
+#### useRender(callback, dependencies=[])
+
+If you're running effects that need to get updated every frame, useRender gives you access to the render-loop.
+
+```jsx
+import { useRender } from 'react-zdog'
+
+// Subscribes to the render-loop, gets cleaned up automatically when the component unmounts
+useRender(t => console.log("I'm in the render-loop"))
 ```
