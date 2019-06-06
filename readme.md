@@ -36,6 +36,7 @@ If you're running effects that need to get updated every frame, useRender gives 
 ```jsx
 import { useRender } from 'react-zdog'
 
-// Subscribes to the render-loop, gets cleaned up automatically when the component unmounts
-useRender(t => console.log("I'm in the render-loop"))
+function MyComponent() {
+  // Subscribes to the render-loop, gets cleaned up automatically when the component unmounts
+  useRender(t => console.log("I'm in the render-loop"))
 ```
