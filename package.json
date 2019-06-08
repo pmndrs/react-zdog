@@ -51,7 +51,7 @@
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8",
-    "zdog": ">=1.0"
+    "zdog": ">=1.2"
   },
   "devDependencies": {
     "@babel/core": "7.4.4",
@@ -79,6 +79,6 @@
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-size-snapshot": "^0.8.0",
-    "zdog": "https://github.com/metafizzy/zdog"
+    "zdog": "^1.0.2"
   }
 }

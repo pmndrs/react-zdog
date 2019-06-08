@@ -2,7 +2,12 @@ import Zdog from 'zdog'
 import React, { useContext, useRef, useEffect, useLayoutEffect, useState, useImperativeHandle } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 
-const illuContext = React.createContext()
+// Temporary hack: https://github.com/metafizzy/zdog/issues/44
+Zdog.Anchor.prototype.renderGraphSvg = function(svg) {
+  this.flatGraph.forEach(item => item.render(svg, Zdog.SvgRenderer))
+}
+
+const stateContext = React.createContext()
 const parentContext = React.createContext()
 
 let globalEffects = []
@@ -14,7 +19,7 @@ export function invalidate() {
   // TODO: render loop has to be able to render frames on demand
 }
 
-export function applyProps(instance, newProps, oldProps = {}, accumulative = false) {
+export function applyProps(instance, newProps) {
   Zdog.extend(instance, newProps)
 }
 
@@ -30,17 +35,21 @@ function useMeasure() {
 }
 
 function useRender(fn, deps = []) {
-  const illu = useContext(illuContext)
+  const state = useContext(stateContext)
   useEffect(() => {
     // Subscribe to the render-loop
-    const unsubscribe = illu.current.subscribe(fn)
+    const unsubscribe = state.current.subscribe(fn)
     // Call subscription off on unmount
     return () => unsubscribe()
   }, deps)
 }
 
-function useZdog(primitive, children, props, ref) {
-  const illu = useContext(illuContext)
+function useZdog() {
+  return useContext(stateContext)
+}
+
+function useZdogPrimitive(primitive, children, props, ref) {
+  const state = useContext(stateContext)
   const parent = useContext(parentContext)
   const [node] = useState(() => new primitive(props))
 
@@ -49,70 +58,57 @@ function useZdog(primitive, children, props, ref) {
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
-      illu.current.node.updateFlatGraph()
-      illu.current.node.updateGraph()
+      state.current.illu.updateGraph()
       return () => {
         parent.removeChild(node)
         parent.updateFlatGraph()
-        illu.current.node.updateFlatGraph()
-        illu.current.node.updateGraph()
+        state.current.illu.updateGraph()
       }
     }
   }, [parent])
   return [<parentContext.Provider value={node} children={children} />, node]
 }
 
-const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest }) => {
+const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', ...rest }) => {
   const canvas = useRef()
-  const canvasRef = useRef()
   const [bind, size] = useMeasure()
-  const [result, node] = useZdog(Zdog.Anchor, children, rest)
+  const [result, scene] = useZdogPrimitive(Zdog.Anchor, children, rest)
 
   const state = useRef({
-    node,
+    scene,
+    illu: undefined,
     size: {},
-    zoom: 1,
     subscribers: [],
     subscribe: fn => {
       state.current.subscribers.push(fn)
       return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
     },
   })
-  useEffect(() => {
-    state.current.size = size
-    state.current.zoom = zoom
-  }, [size, zoom])
 
   useEffect(() => {
-    canvas.current = canvasRef.current.getContext('2d')
-  }, [])
+    state.current.size = size
+    if (state.current.illu) state.current.illu.setSize(size.width, size.height)
+  }, [size])
 
   useEffect(() => {
     function animate(t) {
-      node.updateGraph()
       render(t)
       requestAnimationFrame(animate)
     }
 
+    state.current.illu = new Zdog.Illustration({ element: canvas.current, ...rest })
+    state.current.illu.addChild(scene)
+    state.current.illu.updateGraph()
+
     function render(t) {
-      const { size, zoom, subscribers } = state.current
-      if (size.width && size.height && zoom) {
-        // clear canvas
-        canvas.current.clearRect(0, 0, size.width, size.height)
-        canvas.current.save()
+      const { size, subscribers } = state.current
+      if (size.width && size.height) {
         // Run global effects
         globalEffects.forEach(fn => fn(t))
         // Run local effects
         subscribers.forEach(fn => fn(t))
-        // center canvas & zoom
-        canvas.current.translate(size.width / 2, size.height / 2)
-        canvas.current.scale(zoom, zoom)
-        // set lineJoin and lineCap to round
-        canvas.current.lineJoin = 'round'
-        canvas.current.lineCap = 'round'
-        // render scene graph
-        node.renderGraphCanvas(canvas.current)
-        canvas.current.restore()
+        // Render scene
+        state.current.illu.updateRenderGraph()
       }
     }
 
@@ -124,14 +120,14 @@ const Illustration = React.memo(({ children, config, style, zoom = 1, ...rest })
       ref={bind.ref}
       {...rest}
       style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
-      <canvas ref={canvasRef} style={{ display: 'block' }} width={size.width} height={size.height} />
-      <illuContext.Provider value={state} children={result} />
+      <Element ref={canvas} style={{ display: 'block' }} width={size.width} height={size.height} />
+      {state.current.illu && <stateContext.Provider value={state} children={result} />}
     </div>
   )
 })
 
 const createZdog = primitive =>
-  React.forwardRef(({ children, ...rest }, ref) => useZdog(primitive, children, rest, ref)[0])
+  React.forwardRef(({ children, ...rest }, ref) => useZdogPrimitive(primitive, children, rest, ref)[0])
 
 const Anchor = createZdog(Zdog.Anchor)
 const Shape = createZdog(Zdog.Shape)
@@ -148,6 +144,7 @@ const Box = createZdog(Zdog.Box)
 export {
   Illustration,
   useRender,
+  useZdog,
   Anchor,
   Shape,
   Group,
