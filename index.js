@@ -54,7 +54,11 @@ function useZdogPrimitive(primitive, children, props, ref) {
   const [node] = useState(() => new primitive(props))
 
   useImperativeHandle(ref, () => node)
-  useLayoutEffect(() => void Zdog.extend(node, props))
+  useLayoutEffect(() => {
+    Zdog.extend(node, props)
+    node.updateFlatGraph()
+    state && state.current && state.current.illu.updateGraph()
+  }, [props])
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
@@ -72,7 +76,7 @@ function useZdogPrimitive(primitive, children, props, ref) {
 const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', ...rest }) => {
   const canvas = useRef()
   const [bind, size] = useMeasure()
-  const [result, scene] = useZdogPrimitive(Zdog.Anchor, children, rest)
+  const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
 
   const state = useRef({
     scene,
