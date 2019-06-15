@@ -119,9 +119,12 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
     animate()
   }, [])
 
+  // Takes care of updating the main illustration
   useLayoutEffect(() => {
-    Zdog.extend(state.current.illu, rest)
-    state && state.current && state.current.illu.updateGraph()
+    if (state.current.illu) {
+      Zdog.extend(state.current.illu, rest)
+      state.current.illu.updateGraph()
+    }
   }, [rest])
 
   return (
