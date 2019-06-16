@@ -1,72 +1,47 @@
-import { TAU } from 'zdog'
+import { TAU, lerp, easeInOut } from 'zdog'
 import React, { useRef } from 'react'
 import { Illustration, Anchor, Shape, useRender } from 'react-zdog'
-import { a, useSpring, interpolate } from 'react-spring/zdog'
 
-function Side({ color = 'lightblue', ...props }) {
+const side = [[-1, -1, 1], [-1, 0, 1], [-1, 1, 1], [0, -1, 1], [0, 1, 1], [1, -1, 1], [1, 0, 1], [1, 1, 1]]
+const middle = [[1, 1, 0], [1, -1, 0], [-1, 1, 0], [-1, -1, 0]]
+const frames = [[0, 0, 0], [0, 0, TAU / 4], [-TAU / 4, 0, TAU / 4], [-TAU / 4, 0, TAU / 2]]
+
+function Dots({ stroke = 2.5, color = 'lightblue', coords, ...props }) {
   return (
     <Anchor {...props}>
-      <Shape color={color} translate={{ x: -1, y: -1, z: 1 }} />
-      <Shape color={color} translate={{ x: -1, z: 1 }} />
-      <Shape color={color} translate={{ x: -1, y: 1, z: 1 }} />
-
-      <Shape color={color} translate={{ x: 0, y: -1, z: 1 }} />
-      <Shape color={color} translate={{ x: 0, y: 1, z: 1 }} />
-      <Shape color={color} translate={{ x: 1, y: -1, z: 1 }} />
-
-      <Shape color={color} translate={{ x: 1, z: 1 }} />
-      <Shape color={color} translate={{ x: 1, y: 1, z: 1 }} />
-
-      <Shape color={color} translate={{ x: 1, y: 1, z: 0 }} />
-      <Shape color={color} translate={{ x: 1, y: -1, z: 0 }} />
-
-      <Shape color={color} translate={{ x: -1, y: 1, z: 0 }} />
-      <Shape color={color} translate={{ x: -1, y: -1, z: 0 }} />
+      {coords.map(([x, y, z], index) => (
+        <Shape key={index} stroke={stroke} color={color} translate={{ x, y, z }} />
+      ))}
     </Anchor>
   )
 }
 
-/*
-var keyframes = [
-  { x: 0, y: 0, z: 0 },
-  { x: 0, y: 0, z: TAU/4 },
-  { x: -TAU/4, y: 0, z: TAU/4 },
-  { x: -TAU/4, y: 0, z: TAU/2 },
-];
-
-*/
-
 function Box() {
-  //const ref = useRef(undefined)
-  //useRender(() => (ref.current.rotate.y += 0.05))
-
-  const { x, y, z } = useSpring({
-    from: { x: 0, y: 0, z: 0 },
-    to: async next => {
-      while (true) {
-        await next({ x: 0, y: 0, z: 0 })
-        await next({ x: 0, y: 0, z: TAU / 4 })
-        await next({ x: -TAU / 4, y: 0, z: 0 })
-        await next({ x: -TAU / 4, y: 0, z: TAU / 2 })
-      }
-    },
-    config: { mass: 2, tension: 500, friction: 100 },
+  let ticker = 0
+  let cycleCount = 75
+  let turnLimit = frames.length - 1
+  let ref = useRef(undefined)
+  useRender(() => {
+    let progress = ticker++ / cycleCount
+    let tween = easeInOut(progress % 1, 4)
+    let turn = Math.floor(progress % turnLimit)
+    ref.current.rotate.x = lerp(frames[turn][0], frames[turn + 1][0], tween)
+    ref.current.rotate.y = lerp(frames[turn][1], frames[turn + 1][1], tween)
+    ref.current.rotate.z = lerp(frames[turn][2], frames[turn + 1][2], tween)
   })
-
   return (
-    <a.Anchor scale={5} rotate={interpolate([x, y, z], (x, y, z) => ({ x, y, z }))}>
-      <Side translate={{ z: 0 }} rotate={{ y: 0 }} />
-      <Side translate={{ z: 0 }} rotate={{ x: TAU / 2 }} />
-    </a.Anchor>
+    <Anchor ref={ref} scale={8}>
+      <Dots coords={side} translate={{ z: 0 }} rotate={{ y: 0 }} />
+      <Dots coords={middle} />
+      <Dots coords={side} translate={{ z: 0 }} rotate={{ x: TAU / 2 }} />
+    </Anchor>
   )
 }
 
 export default function App() {
   return (
-    <>
-      <Illustration rotate={{ x: (TAU * -35) / 360, y: (TAU * 1) / 8 }} element="canvas" zoom={20}>
-        <Box />
-      </Illustration>
-    </>
+    <Illustration rotate={{ x: (TAU * -35) / 360, y: (TAU * 1) / 8 }} element="canvas" zoom={15}>
+      <Box />
+    </Illustration>
   )
 }

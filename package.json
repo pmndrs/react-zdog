@@ -51,9 +51,10 @@
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8",
-    "zdog": ">=1.2"
+    "zdog": ">=1.1"
   },
   "devDependencies": {
+    "zdog": "^1.1.0",
     "@babel/core": "7.4.4",
     "@babel/plugin-proposal-class-properties": "7.4.4",
     "@babel/plugin-proposal-do-expressions": "7.2.0",
@@ -78,7 +79,6 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3",
-    "rollup-plugin-size-snapshot": "^0.8.0",
-    "zdog": "^1.0.2"
+    "rollup-plugin-size-snapshot": "^0.8.0"
   }
 }

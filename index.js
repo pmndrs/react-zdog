@@ -2,11 +2,6 @@ import Zdog from 'zdog'
 import React, { useContext, useRef, useEffect, useLayoutEffect, useState, useImperativeHandle } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 
-// Temporary hack: https://github.com/metafizzy/zdog/issues/44
-Zdog.Anchor.prototype.renderGraphSvg = function(svg) {
-  this.flatGraph.forEach(item => item.render(svg, Zdog.SvgRenderer))
-}
-
 const stateContext = React.createContext()
 const parentContext = React.createContext()
 
@@ -21,6 +16,7 @@ export function invalidate() {
 
 export function applyProps(instance, newProps) {
   Zdog.extend(instance, newProps)
+  invalidate()
 }
 
 function useMeasure() {
@@ -54,11 +50,7 @@ function useZdogPrimitive(primitive, children, props, ref) {
   const [node] = useState(() => new primitive(props))
 
   useImperativeHandle(ref, () => node)
-  useLayoutEffect(() => {
-    Zdog.extend(node, props)
-    node.updateFlatGraph()
-    state && state.current && state.current.illu.updateGraph()
-  }, [props])
+  useLayoutEffect(() => void applyProps(node, props), [props])
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
@@ -95,15 +87,12 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
   }, [size])
 
   useEffect(() => {
-    function animate(t) {
-      render(t)
-      requestAnimationFrame(animate)
-    }
-
     state.current.illu = new Zdog.Illustration({ element: canvas.current, ...rest })
     state.current.illu.addChild(scene)
     state.current.illu.updateGraph()
 
+    let frame
+    let active = true
     function render(t) {
       const { size, subscribers } = state.current
       if (size.width && size.height) {
@@ -114,18 +103,21 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
         // Render scene
         state.current.illu.updateRenderGraph()
       }
+      if (active) frame = requestAnimationFrame(render)
     }
 
-    animate()
+    // Start render loop
+    render()
+
+    return () => {
+      // Take no chances, the loop has got to stop if the component unmounts
+      active = false
+      cancelAnimationFrame(frame)
+    }
   }, [])
 
   // Takes care of updating the main illustration
-  useLayoutEffect(() => {
-    if (state.current.illu) {
-      Zdog.extend(state.current.illu, rest)
-      state.current.illu.updateGraph()
-    }
-  }, [rest])
+  useLayoutEffect(() => void (state.current.illu && applyProps(state.current.illu, rest)), [rest])
 
   return (
     <div

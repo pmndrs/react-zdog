@@ -4281,7 +4281,7 @@ yallist@^3.0.0, yallist@^3.0.2, yallist@^3.0.3:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-3.0.3.tgz#b4b049e314be545e3ce802236d6cd22cd91c3de9"
   integrity sha512-S+Zk8DEWE6oKpV+vI3qWkaK+jSbIK86pCwe2IF/xwIpQ8jEuxpw9NyaGjmp9+BoJv5FV2piqCDcoCtStppiq2A==
 
-zdog@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/zdog/-/zdog-1.0.2.tgz#f2a64a727ff0c3d1a067083124e652abcb392a15"
-  integrity sha512-QjLJ5G5H9X4wowICh8Gx7EC4D738qtspaEr6JnUwXcbZ5bDwgHWG/Q3099Lj91mrFODKL3V/ob8VWZUdXr1YoA==
+zdog@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/zdog/-/zdog-1.1.0.tgz#88b60a73e5c8a11fcf0c29d28c0339553ffe9566"
+  integrity sha512-PlgvESx/LKMnHbfRdGvpXn/QpoDK6jmO4HyxtydIXcMYt6qr1DMwNsiqJIiU1ibryKEnlFl/JyNrNe9Tk0+Y9w==
