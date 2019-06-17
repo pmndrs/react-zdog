@@ -45,8 +45,9 @@ If you're running effects that need to get updated every frame, useRender gives 
 import { useRender } from 'react-zdog'
 
 function MyComponent() {
-  // Subscribes to the render-loop, gets cleaned up automatically when the component unmounts
-  useRender(t => console.log("I'm in the render-loop"))
+  const ref = useRef(undefined)
+  useRender(t => ref.current.rotate.y += 0.01)
+  return <Shape ref={ref} />
 ```
 
 #### useZdog()
