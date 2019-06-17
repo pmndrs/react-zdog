@@ -44,10 +44,12 @@ If you're running effects that need to get updated every frame, useRender gives 
 ```jsx
 import { useRender } from 'react-zdog'
 
-function MyComponent() {
+function Spin({ children }) {
   const ref = useRef(undefined)
   useRender(t => ref.current.rotate.y += 0.01)
-  return <Anchor ref={ref} />
+  return (
+    <Anchor ref={ref}>
+      {children}
 ```
 
 #### useZdog()
