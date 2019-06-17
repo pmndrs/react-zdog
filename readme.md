@@ -27,7 +27,7 @@ Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervo
 
 ## Illustration
 
-The `Illustration` object is your portal into zdog. It forwards unreserved properties to the internal Zdog.Illustration instance.
+The `Illustration` object is your portal into zdog. It forwards unreserved properties to the internal Zdog.Illustration instance. The component auto adjusts to re-size changes and fills out the wrapping relative/absolute parent. 
 
 ```jsx
 <Canvas element="svg" /> // Can bei either 'svg' or 'canvas'
