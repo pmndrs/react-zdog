@@ -47,7 +47,7 @@ import { useRender } from 'react-zdog'
 function MyComponent() {
   const ref = useRef(undefined)
   useRender(t => ref.current.rotate.y += 0.01)
-  return <Shape ref={ref} />
+  return <Anchor ref={ref} />
 ```
 
 #### useZdog()
