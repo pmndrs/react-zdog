@@ -15,7 +15,7 @@ import { Illustration, Shape } from 'react-zdog'
 
 ReactDOM.render(
   <Illustration zoom={8}>
-    <Shape stroke={20} color="lightblue" />
+    <Shape stroke={20} color="lightblue" rotate={{ x: Math.PI }} />
   </Illustration>,
   document.getElementById('root')
 )
