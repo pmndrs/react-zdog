@@ -3,6 +3,10 @@
 </p>
 
     npm install zdog react-zdog
+    # or
+    yarn add zdog react-zdog
+
+![npm](https://img.shields.io/npm/v/react-zdog.svg?style=flat-square) ![npm](https://img.shields.io/npm/dt/react-zdog.svg?style=flat-square)
 
 react-zdog is a declarative abstraction of [zdog](https://zzz.dog/), a cute pseudo 3d-engine. Doing zdog in React allows you to break up your scene graph into declarative, re-usable components with clean, reactive semantics. Try a live demo [here](https://codesandbox.io/s/nervous-feather-vk9uh).
 
@@ -21,16 +25,16 @@ ReactDOM.render(
 )
 ```
 
-# Api
+# API
 
-Comming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. react-zdog basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
+Coming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. react-zdog basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
 
 ## Illustration
 
 The `Illustration` object is your portal into zdog. It forwards unreserved properties to the internal Zdog.Illustration instance. The component auto adjusts to re-size changes and fills out the wrapping relative/absolute parent. 
 
 ```jsx
-<Canvas element="svg" /> // Can bei either 'svg' or 'canvas'
+<Canvas element="svg" /> // Can be either 'svg' or 'canvas'
 ```
 
 # Hooks
@@ -50,6 +54,9 @@ function Spin({ children }) {
   return (
     <Anchor ref={ref}>
       {children}
+    </Anchor>
+  )
+}
 ```
 
 #### useZdog()
