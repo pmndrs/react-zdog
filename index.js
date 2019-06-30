@@ -41,7 +41,8 @@ function useRender(fn, deps = []) {
 }
 
 function useZdog() {
-  return useContext(stateContext)
+  const state = useContext(stateContext)
+  return state.current
 }
 
 function useZdogPrimitive(primitive, children, props, ref) {
