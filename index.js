@@ -66,34 +66,25 @@ function useZdogPrimitive(primitive, children, props, ref) {
   return [<parentContext.Provider value={node} children={children} />, node]
 }
 
-const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', ...rest }) => {
-  const canvas = useRef()
-  const [bind, size] = useMeasure()
-  const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
+const Illustration = React.memo(
+  ({ children, style, resize, element: Element = 'svg', renderOnce = false, ...rest }) => {
+    const canvas = useRef()
+    const [bind, size] = useMeasure()
+    const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
 
-  const state = useRef({
-    scene,
-    illu: undefined,
-    size: {},
-    subscribers: [],
-    subscribe: fn => {
-      state.current.subscribers.push(fn)
-      return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
-    },
-  })
-
-  useEffect(() => {
-    state.current.size = size
-    if (state.current.illu) state.current.illu.setSize(size.width, size.height)
-  }, [size])
-
-  useEffect(() => {
-    state.current.illu = new Zdog.Illustration({ element: canvas.current, ...rest })
-    state.current.illu.addChild(scene)
-    state.current.illu.updateGraph()
+    const state = useRef({
+      scene,
+      illu: undefined,
+      size: {},
+      subscribers: [],
+      subscribe: fn => {
+        state.current.subscribers.push(fn)
+        return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
+      },
+    })
 
     let frame
-    let active = true
+    let active = !renderOnce
     function render(t) {
       const { size, subscribers } = state.current
       if (size.width && size.height) {
@@ -107,29 +98,48 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
       if (active) frame = requestAnimationFrame(render)
     }
 
-    // Start render loop
-    render()
+    useEffect(() => {
+      state.current.size = size
+      if (state.current.illu) {
+        state.current.illu.setSize(size.width, size.height)
 
-    return () => {
-      // Take no chances, the loop has got to stop if the component unmounts
-      active = false
-      cancelAnimationFrame(frame)
-    }
-  }, [])
+        // Render when the size changes if the illustration
+        // is set to "renderOnce"
+        if (!active) render()
+      }
+    }, [size])
 
-  // Takes care of updating the main illustration
-  useLayoutEffect(() => void (state.current.illu && applyProps(state.current.illu, rest)), [rest])
+    useEffect(() => {
+      state.current.illu = new Zdog.Illustration({ element: canvas.current, ...rest })
+      state.current.illu.addChild(scene)
+      state.current.illu.updateGraph()
 
-  return (
-    <div
-      ref={bind.ref}
-      {...rest}
-      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
-      <Element ref={canvas} style={{ display: 'block' }} width={size.width} height={size.height} />
-      {state.current.illu && <stateContext.Provider value={state} children={result} />}
-    </div>
-  )
-})
+      // Start render loop, if active is false (renderOnce is true)
+      // then the illustration will be rendered when the illustration
+      // size changes.
+      if (active) render()
+
+      return () => {
+        // Take no chances, the loop has got to stop if the component unmounts
+        active = false
+        cancelAnimationFrame(frame)
+      }
+    }, [])
+
+    // Takes care of updating the main illustration
+    useLayoutEffect(() => void (state.current.illu && applyProps(state.current.illu, rest)), [rest])
+
+    return (
+      <div
+        ref={bind.ref}
+        {...rest}
+        style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
+        <Element ref={canvas} style={{ display: 'block' }} width={size.width} height={size.height} />
+        {state.current.illu && <stateContext.Provider value={state} children={result} />}
+      </div>
+    )
+  }
+)
 
 const createZdog = primitive =>
   React.forwardRef(({ children, ...rest }, ref) => useZdogPrimitive(primitive, children, rest, ref)[0])
