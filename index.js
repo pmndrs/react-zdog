@@ -66,7 +66,7 @@ function useZdogPrimitive(primitive, children, props, ref) {
   return [<parentContext.Provider value={node} children={children} />, node]
 }
 
-const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', ...rest }) => {
+const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', dragRotate, ...rest }) => {
   const canvas = useRef()
   const [bind, size] = useMeasure()
   const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
@@ -88,7 +88,7 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
   }, [size])
 
   useEffect(() => {
-    state.current.illu = new Zdog.Illustration({ element: canvas.current, ...rest })
+    state.current.illu = new Zdog.Illustration({ element: canvas.current, dragRotate, ...rest })
     state.current.illu.addChild(scene)
     state.current.illu.updateGraph()
 
