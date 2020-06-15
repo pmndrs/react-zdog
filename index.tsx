@@ -24,8 +24,8 @@ interface Bounds {
 }
 
 type UnsubscribeFn = () => void
-interface ZdogState<Primitive extends Zdog.Anchor = Zdog.Anchor> {
-  scene: Primitive
+interface ZdogState {
+  scene: Zdog.Anchor
   illu: Zdog.Illustration
   size: Bounds
   subscribers: FrameRequestCallback[]
@@ -37,8 +37,8 @@ type PrimitiveProps<Primitive extends typeof Zdog.Anchor> = PropsWithChildren<Co
 const stateContext = React.createContext<MutableRefObject<ZdogState>>(null)
 const parentContext = React.createContext<Zdog.Anchor>(null)
 
-let globalEffects: Function[] = []
-export function addEffect(callback: Function): void {
+let globalEffects: FrameRequestCallback[] = []
+export function addEffect(callback: FrameRequestCallback): void {
   globalEffects.push(callback)
 }
 
