@@ -27,7 +27,7 @@ type UnsubscribeFn = () => void
 interface ZdogState<Primitive extends Zdog.Anchor = Zdog.Anchor> {
   scene: Primitive
   illu: Zdog.Illustration
-  size: Bounds | {}
+  size: Bounds
   subscribers: FrameRequestCallback[]
   subscribe: (fn: FrameRequestCallback) => UnsubscribeFn
 }
@@ -38,7 +38,7 @@ const stateContext = React.createContext<MutableRefObject<ZdogState>>(null)
 const parentContext = React.createContext<Zdog.Anchor>(null)
 
 let globalEffects: Function[] = []
-export function addEffect(callback) {
+export function addEffect(callback: Function): void {
   globalEffects.push(callback)
 }
 
@@ -114,14 +114,14 @@ export type IllustrationProps = Omit<Zdog.IllustrationOptions, 'element' | 'addT
 
 const Illustration = React.memo<IllustrationProps>(
   ({ children, style, resize, element: Element = 'svg', dragRotate, ...rest }) => {
-    const canvas = useRef()
+    const canvas = useRef<HTMLCanvasElement & SVGSVGElement>()
     const [bind, size] = useMeasure<HTMLDivElement>()
     const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
 
-    const state = useRef<ZdogState>({
+    const state: MutableRefObject<ZdogState> = useRef<ZdogState>({
       scene,
       illu: undefined,
-      size: {},
+      size: null,
       subscribers: [],
       subscribe: fn => {
         state.current.subscribers.push(fn)
@@ -139,11 +139,11 @@ const Illustration = React.memo<IllustrationProps>(
       state.current.illu.addChild(scene)
       state.current.illu.updateGraph()
 
-      let frame
+      let frame: number
       let active = true
       const render: FrameRequestCallback = t => {
         const { size, subscribers } = state.current
-        if (size.width && size.height) {
+        if (size && size.width && size.height) {
           // Run global effects
           globalEffects.forEach(fn => fn(t))
           // Run local effects
