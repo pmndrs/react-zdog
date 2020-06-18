@@ -2,6 +2,7 @@ import path from 'path'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
+import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 
 const root = process.platform === 'win32' ? path.resolve('/') : '/'
 const external = id => !id.startsWith('.') && !id.startsWith(root)
@@ -49,6 +50,7 @@ function createConfig(entry, out) {
         commonjs({
           include: 'node_modules/**',
         }),
+        sizeSnapshot(),
       ],
     },
   ]
