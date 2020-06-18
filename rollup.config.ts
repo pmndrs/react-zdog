@@ -1,14 +1,14 @@
 import path from 'path'
 import babel from 'rollup-plugin-babel'
-import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
+import resolve from 'rollup-plugin-node-resolve'
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 
 const root = process.platform === 'win32' ? path.resolve('/') : '/'
 const external = id => !id.startsWith('.') && !id.startsWith(root)
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
-const getBabelOptions = ({ useESModules }, targets) => ({
+const getBabelOptions = ({ useESModules }, targets = '') => ({
   babelrc: false,
   extensions,
   //exclude: '**/node_modules/**',
@@ -50,9 +50,10 @@ function createConfig(entry, out) {
         commonjs({
           include: 'node_modules/**',
         }),
+        sizeSnapshot(),
       ],
     },
   ]
 }
 
-export default [...createConfig('index', 'index')]
+export default [...createConfig('index.tsx', 'index')]
