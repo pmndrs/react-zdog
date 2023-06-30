@@ -1,17 +1,20 @@
 import Zdog from 'zdog'
-import React, { useContext, useRef, useEffect, useLayoutEffect, useState, useImperativeHandle } from 'react'
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useImperativeHandle,
+  useCallback,
+} from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 
 const stateContext = React.createContext()
 const parentContext = React.createContext()
 
-export function invalidate() {
-  // TODO: render loop has to be able to render frames on demand
-}
-
 export function applyProps(instance, newProps) {
   Zdog.extend(instance, newProps)
-  invalidate()
 }
 
 function useMeasure() {
@@ -61,80 +64,112 @@ function useZdogPrimitive(primitive, children, props, ref) {
   return [<parentContext.Provider value={node} children={children} />, node]
 }
 
-const Illustration = React.memo(({ children, style, resize, element: Element = 'svg', dragRotate, ...rest }) => {
-  const canvas = useRef()
-  const [bind, size] = useMeasure()
-  const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
+function useInvalidate() {
+  const state = useZdog()
 
-  const state = useRef({
-    scene,
-    illu: undefined,
-    size: {},
-    subscribers: [],
-    subscribe: fn => {
-      state.current.subscribers.push(fn)
-      return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
-    },
-  })
+  const invalidate = useCallback(() => state.illu.updateRenderGraph(), [state])
 
-  useEffect(() => {
-    state.current.size = size
-    if (state.current.illu) state.current.illu.setSize(size.width, size.height)
-  }, [size])
+  return invalidate
+}
 
-  useEffect(() => {
-    state.current.illu = new Zdog.Illustration({ element: canvas.current, dragRotate, ...rest })
-    state.current.illu.addChild(scene)
-    state.current.illu.updateGraph()
+const Illustration = React.memo(
+  ({
+    children,
+    style,
+    resize,
+    element: Element = 'svg',
+    frameloop = 'always',
+    dragRotate,
+    onDragStart = () => {},
+    onDragMove = () => {},
+    onDragEnd = () => {},
+    ...rest
+  }) => {
+    const canvas = useRef()
+    const [bind, size] = useMeasure()
+    const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
 
-    let frame
-    let active = true
-    function render(t) {
-      const { size, subscribers } = state.current
-      if (size.width && size.height) {
-        // Run local effects
-        subscribers.forEach(fn => fn(t))
-        // Render scene
-        state.current.illu.updateRenderGraph()
+    const state = useRef({
+      scene,
+      illu: undefined,
+      size: {},
+      subscribers: [],
+      subscribe: fn => {
+        state.current.subscribers.push(fn)
+        return () => (state.current.subscribers = state.current.subscribers.filter(s => s !== fn))
+      },
+    })
+
+    useEffect(() => {
+      state.current.size = size
+      if (state.current.illu) {
+        state.current.illu.setSize(size.width, size.height)
+        if (frameloop === 'demand') {
+          state.current.illu.updateRenderGraph()
+        }
       }
-      if (active) frame = requestAnimationFrame(render)
-    }
+    }, [size])
 
-    // Start render loop
-    render()
+    useEffect(() => {
+      state.current.illu = new Zdog.Illustration({
+        element: canvas.current,
+        dragRotate,
+        ...rest,
+      })
+      state.current.illu.addChild(scene)
+      state.current.illu.updateGraph()
 
-    return () => {
-      // Take no chances, the loop has got to stop if the component unmounts
-      active = false
-      cancelAnimationFrame(frame)
-    }
-  }, [])
+      let frame
+      let active = true
+      function render(t) {
+        const { size, subscribers } = state.current
+        if (size.width && size.height) {
+          // Run local effects
+          subscribers.forEach(fn => fn(t))
+          // Render scene
+          if (frameloop !== 'demand') {
+            state.current.illu.updateRenderGraph()
+          }
+        }
+        if (active && frameloop !== 'demand') frame = requestAnimationFrame(render)
+      }
 
-  // Takes care of updating the main illustration
-  useLayoutEffect(() => void (state.current.illu && applyProps(state.current.illu, rest)), [rest])
+      // Start render loop
+      render()
 
-  return (
-    <div
-      ref={bind.ref}
-      {...rest}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        ...style,
-      }}>
-      <Element
-        ref={canvas}
-        style={{ display: 'block', boxSizing: 'border-box' }}
-        width={size.width}
-        height={size.height}
-      />
-      {state.current.illu && <stateContext.Provider value={state} children={result} />}
-    </div>
-  )
-})
+      return () => {
+        // Take no chances, the loop has got to stop if the component unmounts
+        active = false
+        cancelAnimationFrame(frame)
+      }
+    }, [frameloop])
+
+    // Takes care of updating the main illustration
+    useLayoutEffect(() => void (state.current.illu && applyProps(state.current.illu, rest)), [rest])
+
+    return (
+      <div
+        ref={bind.ref}
+        {...rest}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+          ...style,
+        }}>
+        <Element
+          ref={canvas}
+          style={{ display: 'block', boxSizing: 'border-box' }}
+          width={size.width}
+          height={size.height}
+        />
+        {state.current.illu && <stateContext.Provider value={state} children={result} />}
+      </div>
+    )
+  }
+)
 
 const createZdog = primitive =>
   React.forwardRef(({ children, ...rest }, ref) => useZdogPrimitive(primitive, children, rest, ref)[0])
@@ -155,6 +190,7 @@ export {
   Illustration,
   useRender,
   useZdog,
+  useInvalidate,
   Anchor,
   Shape,
   Group,
