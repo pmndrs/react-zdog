@@ -5,11 +5,6 @@ import ResizeObserver from 'resize-observer-polyfill'
 const stateContext = React.createContext()
 const parentContext = React.createContext()
 
-let globalEffects = []
-export function addEffect(callback) {
-  globalEffects.push(callback)
-}
-
 export function invalidate() {
   // TODO: render loop has to be able to render frames on demand
 }
@@ -97,8 +92,6 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
     function render(t) {
       const { size, subscribers } = state.current
       if (size.width && size.height) {
-        // Run global effects
-        globalEffects.forEach(fn => fn(t))
         // Run local effects
         subscribers.forEach(fn => fn(t))
         // Render scene
@@ -124,8 +117,20 @@ const Illustration = React.memo(({ children, style, resize, element: Element = '
     <div
       ref={bind.ref}
       {...rest}
-      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', ...style }}>
-      <Element ref={canvas} style={{ display: 'block' }} width={size.width} height={size.height} />
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        ...style,
+      }}>
+      <Element
+        ref={canvas}
+        style={{ display: 'block', boxSizing: 'border-box' }}
+        width={size.width}
+        height={size.height}
+      />
       {state.current.illu && <stateContext.Provider value={state} children={result} />}
     </div>
   )
