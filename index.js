@@ -79,18 +79,7 @@ function useInvalidate() {
 }
 
 const Illustration = React.memo(
-  ({
-    children,
-    style,
-    resize,
-    element: Element = 'svg',
-    frameloop = 'always',
-    dragRotate,
-    onDragStart = () => {},
-    onDragMove = () => {},
-    onDragEnd = () => {},
-    ...rest
-  }) => {
+  ({ children, style, resize, element: Element = 'svg', frameloop = 'always', dragRotate, ...rest }) => {
     const canvas = useRef()
     const [bind, size] = useMeasure()
     const [result, scene] = useZdogPrimitive(Zdog.Anchor, children)
