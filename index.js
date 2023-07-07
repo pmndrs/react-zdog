@@ -49,7 +49,13 @@ function useZdogPrimitive(primitive, children, props, ref) {
   const [node] = useState(() => new primitive(props))
 
   useImperativeHandle(ref, () => node)
-  useLayoutEffect(() => void applyProps(node, props), [props])
+  useLayoutEffect(() => {
+    applyProps(node, props)
+    if (parent) {
+      state.current.illu.updateRenderGraph()
+    }
+  }, [props])
+
   useLayoutEffect(() => {
     if (parent) {
       parent.addChild(node)
