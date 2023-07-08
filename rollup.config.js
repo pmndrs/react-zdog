@@ -55,4 +55,4 @@ function createConfig(entry, out) {
   ]
 }
 
-export default [...createConfig('index', 'index')]
+export default [...createConfig('src/index', 'index')]

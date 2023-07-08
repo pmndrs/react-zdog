@@ -79,6 +79,7 @@
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-size-snapshot": "^0.8.0",
+    "rollup-plugin-uglify": "^6.0.4",
     "zdog": "1.1.3"
   }
 }
