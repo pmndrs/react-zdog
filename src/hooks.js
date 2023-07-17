@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
-import { applyProps, generateRandomHexColor } from './utils'
+import { applyProps, createProxy, generateRandomHexColor } from './utils'
 
 export const stateContext = React.createContext()
 export const parentContext = React.createContext()
@@ -64,7 +64,20 @@ export function useZdogPrimitive(primitive, children, props, ref) {
   const [node] = useState(() => new primitive(props))
   const [ghost_node] = useState(() => new primitive(hiddenNodeProps))
 
-  useImperativeHandle(ref, () => node)
+  const syncGhostNode = (obj, prop, value, parentProp) => {
+    if (parentProp) {
+      ghost_node[parentProp][prop] = value
+    } else {
+      ghost_node[prop] = value
+    }
+
+    state.current.illu.updateRenderGraph()
+    state.current.illu_ghost.updateRenderGraph()
+  }
+
+  const [proxyNode] = useState(() => createProxy(node, syncGhostNode))
+
+  useImperativeHandle(ref, () => proxyNode)
 
   useLayoutEffect(() => {
     applyProps(node, props)

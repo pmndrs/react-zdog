@@ -28,3 +28,22 @@ const componentToHex = c => {
 export const rgbToHex = (r, g, b) => {
   return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
 }
+
+export function createProxy(target, handleChange, parentProp) {
+  return new Proxy(target, {
+    set(obj, prop, value) {
+      if (typeof value === 'object' && value !== null) {
+        value = createProxy(value, handleChange)
+      }
+      handleChange(obj, prop, value, parentProp)
+      obj[prop] = value
+      return true
+    },
+    get(obj, prop) {
+      if (typeof obj[prop] === 'object' && obj[prop] !== null) {
+        return createProxy(obj[prop], handleChange, prop)
+      }
+      return obj[prop]
+    },
+  })
+}
