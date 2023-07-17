@@ -1,7 +1,7 @@
 import Zdog from 'zdog'
-import React, { useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useMeasure, useZdogPrimitive, stateContext } from './hooks'
-import { applyProps, rgbToHex } from './utils'
+import { applyProps, getMousePos, getPixel } from './utils'
 
 export const Illustration = React.memo(
   ({
@@ -111,30 +111,10 @@ export const Illustration = React.memo(
       state.current.illu_ghost && applyProps(state.current.illu_ghost, rest)
     }, [rest])
 
-    const getMousePos = useCallback(
-      (canvas, evt) => {
-        const rect = canvas.getBoundingClientRect()
-        return {
-          x: ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas_ghost.current.width,
-          y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas_ghost.current.height,
-        }
-      },
-      [state]
-    )
-
-    const getPixel = useCallback(
-      ({ x, y }) => {
-        let imageData = ghostCanvasContext.getImageData(x, y, 1, 1)
-        let data = imageData.data
-        return rgbToHex(data[0], data[1], data[2])
-      },
-      [ghostCanvasContext]
-    )
-
     const click = e => {
       state.current.illu_ghost && state.current.illu_ghost.updateRenderGraph()
-      const coords = getMousePos(canvas.current, e)
-      const pixel = getPixel(coords)
+      const coords = getMousePos(canvas.current, e, canvas_ghost.current)
+      const pixel = getPixel({ ...coords, canvasContext: ghostCanvasContext })
       const colorId = pixel.toUpperCase()
       const clickEvent = state.current.clickEventMap[colorId]
       clickEvent && clickEvent(e, state.current.itemMap[colorId])

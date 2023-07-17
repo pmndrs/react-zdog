@@ -47,3 +47,17 @@ export function createProxy(target, handleChange, parentProp) {
     },
   })
 }
+
+export const getMousePos = (canvas, evt, canvas_ghost) => {
+  const rect = canvas.getBoundingClientRect()
+  return {
+    x: ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas_ghost.width,
+    y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas_ghost.height,
+  }
+}
+
+export const getPixel = ({ x, y, canvasContext }) => {
+  let imageData = canvasContext.getImageData(x, y, 1, 1)
+  let data = imageData.data
+  return rgbToHex(data[0], data[1], data[2])
+}
