@@ -40,6 +40,9 @@ export const Illustration = React.memo(
       illu_ghost: undefined,
       itemMap: {},
       clickEventMap: {},
+      pointerMoveEventMap: {},
+      pointerEnterEventMap: {},
+      pointerLeaveEventMap: {},
     })
 
     useEffect(() => {
@@ -120,6 +123,41 @@ export const Illustration = React.memo(
       clickEvent && clickEvent(e, state.current.itemMap[colorId])
     }
 
+    const prevColorId = useRef(null)
+    const pointerOnObj = useRef(null)
+
+    const setPointerOnObj = newState => {
+      pointerOnObj.current = newState
+    }
+
+    const pointerMove = e => {
+      state.current.illu_ghost && state.current.illu_ghost.updateRenderGraph()
+      const coords = getMousePos(canvas.current, e, canvas_ghost.current)
+      const pixel = getPixel({ ...coords, canvasContext: ghostCanvasContext })
+      const colorId = pixel.toUpperCase()
+
+      if (colorId !== '#000000' && prevColorId.current !== colorId && pointerOnObj.current !== colorId) {
+        const pointerEnterEvent = state.current.pointerEnterEventMap[colorId]
+        pointerEnterEvent && pointerEnterEvent(e, state.current.itemMap[colorId])
+        setPointerOnObj(prevColorId.current)
+      }
+
+      if (
+        prevColorId.current &&
+        prevColorId.current !== '#000000' &&
+        prevColorId.current !== colorId &&
+        pointerOnObj.current
+      ) {
+        const pointerLeaveEvent = state.current.pointerLeaveEventMap[prevColorId.current]
+        pointerLeaveEvent && pointerLeaveEvent(e, state.current.itemMap[prevColorId.current])
+      }
+
+      const pointerMoveEvent = state.current.pointerMoveEventMap[colorId]
+      pointerMoveEvent && pointerMoveEvent(e, state.current.itemMap[colorId])
+
+      prevColorId.current = colorId
+    }
+
     return (
       <>
         <div
@@ -139,6 +177,7 @@ export const Illustration = React.memo(
             width={size.width}
             height={size.height}
             onClick={click}
+            onPointerMove={pointerMove}
           />
           {state.current.illu && <stateContext.Provider value={state} children={result} />}
         </div>

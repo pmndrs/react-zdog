@@ -13,6 +13,9 @@ function Dots({ stroke = 2.5, color = 'lightblue', coords, ...props }) {
         <Shape
           key={index}
           onClick={(e, obj) => console.log(index, e, obj, '>>>>>>>>>>>>>>>>')}
+          onPointerMove={() => console.log(index, 'MOVE')}
+          onPointerEnter={() => console.log(index, 'Enter')}
+          onPointerLeave={() => console.log(index, 'Leave')}
           stroke={stroke}
           color={color}
           translate={{ x, y, z }}
@@ -31,9 +34,9 @@ function Box() {
     let progress = ticker++ / cycleCount
     let tween = easeInOut(progress % 1, 4)
     let turn = Math.floor(progress % turnLimit)
-    ref.current.rotate.x = lerp(frames[turn][0], frames[turn + 1][0], tween)
-    ref.current.rotate.y = lerp(frames[turn][1], frames[turn + 1][1], tween)
-    ref.current.rotate.z = lerp(frames[turn][2], frames[turn + 1][2], tween)
+    // ref.current.rotate.x = lerp(frames[turn][0], frames[turn + 1][0], tween)
+    // ref.current.rotate.y = lerp(frames[turn][1], frames[turn + 1][1], tween)
+    // ref.current.rotate.z = lerp(frames[turn][2], frames[turn + 1][2], tween)
   })
   return (
     <Anchor ref={ref} scale={8}>

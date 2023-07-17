@@ -108,11 +108,23 @@ export function useZdogPrimitive(primitive, children, props, ref) {
       if (props.onClick) {
         state.current.clickEventMap[colorId] = props.onClick
       }
+      if (props.onPointerMove) {
+        state.current.pointerMoveEventMap[colorId] = props.onPointerMove
+      }
+      if (props.onPointerEnter) {
+        state.current.pointerEnterEventMap[colorId] = props.onPointerEnter
+      }
+      if (props.onPointerLeave) {
+        state.current.pointerLeaveEventMap[colorId] = props.onPointerLeave
+      }
     }
 
     return () => {
       delete state.current.itemMap[colorId]
       delete state.current.clickEventMap[colorId]
+      delete state.current.pointerMoveEventMap[colorId]
+      delete state.current.pointerEnterEventMap[colorId]
+      delete state.current.pointerLeaveEventMap[colorId]
     }
   }, [props])
 
