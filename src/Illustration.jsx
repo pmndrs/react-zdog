@@ -89,7 +89,7 @@ export const Illustration = React.memo(
           // Render scene
           if (frameloop !== 'demand') {
             state.current.illu.updateRenderGraph()
-            state.current.illu_ghost.updateRenderGraph()
+            // state.current.illu_ghost.updateRenderGraph()
           }
         }
         if (active && frameloop !== 'demand') frame = requestAnimationFrame(render)
