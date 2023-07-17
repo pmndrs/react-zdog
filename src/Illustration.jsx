@@ -12,6 +12,7 @@ export const Illustration = React.memo(
     frameloop = 'always',
     dragRotate,
     onDragMove = () => {},
+    pointerEvents = false,
     ...rest
   }) => {
     const canvas = useRef()
@@ -43,6 +44,7 @@ export const Illustration = React.memo(
       pointerMoveEventMap: {},
       pointerEnterEventMap: {},
       pointerLeaveEventMap: {},
+      pointerEvents,
     })
 
     useEffect(() => {
@@ -115,6 +117,8 @@ export const Illustration = React.memo(
     }, [rest])
 
     const click = e => {
+      if (!pointerEvents) return
+
       state.current.illu_ghost && state.current.illu_ghost.updateRenderGraph()
       const coords = getMousePos(canvas.current, e, canvas_ghost.current)
       const pixel = getPixel({ ...coords, canvasContext: ghostCanvasContext })
@@ -131,6 +135,8 @@ export const Illustration = React.memo(
     }
 
     const pointerMove = e => {
+      if (!pointerEvents) return
+
       state.current.illu_ghost && state.current.illu_ghost.updateRenderGraph()
       const coords = getMousePos(canvas.current, e, canvas_ghost.current)
       const pixel = getPixel({ ...coords, canvasContext: ghostCanvasContext })
