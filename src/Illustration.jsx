@@ -4,7 +4,16 @@ import { useMeasure, useZdogPrimitive, stateContext } from './hooks'
 import { applyProps } from './utils'
 
 export const Illustration = React.memo(
-  ({ children, style, resize, element: Element = 'svg', frameloop = 'always', dragRotate, ...rest }) => {
+  ({
+    children,
+    style,
+    resize,
+    element: Element = 'svg',
+    frameloop = 'always',
+    dragRotate,
+    onDragMove = () => {},
+    ...rest
+  }) => {
     const canvas = useRef()
 
     //ref to secondary canvas and 2d context
@@ -42,6 +51,15 @@ export const Illustration = React.memo(
       state.current.illu = new Zdog.Illustration({
         element: canvas.current,
         dragRotate,
+        onDragMove: () => {
+          state.current.illu_ghost.rotate = {
+            x: state.current.illu.rotate.x,
+            y: state.current.illu.rotate.y,
+            z: state.current.illu.rotate.z,
+          }
+          // state.current.illu_ghost.updateRenderGraph()
+          onDragMove()
+        },
         ...rest,
       })
       state.current.illu.addChild(scene)

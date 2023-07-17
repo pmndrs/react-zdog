@@ -40,7 +40,7 @@ function Box() {
 
 export default function App() {
   return (
-    <Illustration rotate={{ x: (TAU * -35) / 360, y: (TAU * 1) / 8 }} element="canvas" zoom={15}>
+    <Illustration dragRotate={true} rotate={{ x: (TAU * -35) / 360, y: (TAU * 1) / 8 }} element="canvas" zoom={15}>
       <Box />
     </Illustration>
   )
