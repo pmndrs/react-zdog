@@ -92,10 +92,14 @@ export function useZdogPrimitive(primitive, children, props, ref) {
   useEffect(() => {
     if (parent) {
       state.current.itemMap[colorId] = node
+      if (props.onClick) {
+        state.current.clickEventMap[colorId] = props.onClick
+      }
     }
 
     return () => {
       delete state.current.itemMap[colorId]
+      delete state.current.clickEventMap[colorId]
     }
   }, [props])
 

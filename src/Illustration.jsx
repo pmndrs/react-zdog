@@ -1,7 +1,7 @@
 import Zdog from 'zdog'
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react'
 import { useMeasure, useZdogPrimitive, stateContext } from './hooks'
-import { applyProps } from './utils'
+import { applyProps, rgbToHex } from './utils'
 
 export const Illustration = React.memo(
   ({
@@ -19,6 +19,12 @@ export const Illustration = React.memo(
     //ref to secondary canvas and 2d context
     const canvas_ghost = useRef()
 
+    const [ghostCanvasContext, setGhostCanvasContext] = useState(null)
+
+    useEffect(() => {
+      setGhostCanvasContext(canvas_ghost.current.getContext('2d', { willReadFrequently: true }))
+    }, [])
+
     const [bind, size] = useMeasure()
     const [result, scene, ghostScene] = useZdogPrimitive(Zdog.Anchor, children)
 
@@ -33,6 +39,7 @@ export const Illustration = React.memo(
       },
       illu_ghost: undefined,
       itemMap: {},
+      clickEventMap: {},
     })
 
     useEffect(() => {
@@ -104,6 +111,35 @@ export const Illustration = React.memo(
       state.current.illu_ghost && applyProps(state.current.illu_ghost, rest)
     }, [rest])
 
+    const getMousePos = useCallback(
+      (canvas, evt) => {
+        const rect = canvas.getBoundingClientRect()
+        return {
+          x: ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas_ghost.current.width,
+          y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas_ghost.current.height,
+        }
+      },
+      [state]
+    )
+
+    const getPixel = useCallback(
+      ({ x, y }) => {
+        let imageData = ghostCanvasContext.getImageData(x, y, 1, 1)
+        let data = imageData.data
+        return rgbToHex(data[0], data[1], data[2])
+      },
+      [ghostCanvasContext]
+    )
+
+    const click = e => {
+      state.current.illu_ghost && state.current.illu_ghost.updateRenderGraph()
+      const coords = getMousePos(canvas.current, e)
+      const pixel = getPixel(coords)
+      const colorId = pixel.toUpperCase()
+      const clickEvent = state.current.clickEventMap[colorId]
+      clickEvent && clickEvent(e, state.current.itemMap[colorId])
+    }
+
     return (
       <>
         <div
@@ -122,6 +158,7 @@ export const Illustration = React.memo(
             style={{ display: 'block', boxSizing: 'border-box' }}
             width={size.width}
             height={size.height}
+            onClick={click}
           />
           {state.current.illu && <stateContext.Provider value={state} children={result} />}
         </div>
