@@ -69,7 +69,6 @@ export const Illustration = React.memo(
             y: state.current.illu.rotate.y,
             z: state.current.illu.rotate.z,
           }
-          // state.current.illu_ghost.updateRenderGraph()
           onDragMove()
         },
         ...rest,
@@ -94,7 +93,6 @@ export const Illustration = React.memo(
           // Render scene
           if (frameloop !== 'demand') {
             state.current.illu.updateRenderGraph()
-            // state.current.illu_ghost.updateRenderGraph()
           }
         }
         if (active && frameloop !== 'demand') frame = requestAnimationFrame(render)
@@ -192,13 +190,10 @@ export const Illustration = React.memo(
           style={{
             display: 'block',
             boxSizing: 'border-box',
-            // opacity: '0',
+            opacity: '0',
             position: 'fixed',
-            top: '-40%',
-            left: '-40%',
             zIndex: '1000',
             pointerEvents: 'none',
-            transform: 'scale(0.2)',
             background: 'black',
           }}
           width={size.width}

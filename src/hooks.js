@@ -72,7 +72,6 @@ export function useZdogPrimitive(primitive, children, props, ref) {
     }
 
     state.current.illu.updateRenderGraph()
-    // state.current.illu_ghost.updateRenderGraph()
   }
 
   const [proxyNode] = useState(() => createProxy(node, syncGhostNode))
