@@ -90,32 +90,33 @@ export function useZdogPrimitive(primitive, children, props, ref) {
   }, [hiddenNodeProps])
 
   useLayoutEffect(() => {
-    if (parent) {
-      parent.addChild(node)
+    if (!parent) return
+
+    parent.addChild(node)
+    state.current.illu.updateGraph()
+
+    return () => {
+      parent.removeChild(node)
+      parent.updateFlatGraph()
       state.current.illu.updateGraph()
-      return () => {
-        parent.removeChild(node)
-        parent.updateFlatGraph()
-        state.current.illu.updateGraph()
-      }
     }
   }, [parent])
 
   useEffect(() => {
-    if (parent) {
-      state.current.itemMap[colorId] = node
-      if (props.onClick) {
-        state.current.clickEventMap[colorId] = props.onClick
-      }
-      if (props.onPointerMove) {
-        state.current.pointerMoveEventMap[colorId] = props.onPointerMove
-      }
-      if (props.onPointerEnter) {
-        state.current.pointerEnterEventMap[colorId] = props.onPointerEnter
-      }
-      if (props.onPointerLeave) {
-        state.current.pointerLeaveEventMap[colorId] = props.onPointerLeave
-      }
+    if (!parent) return
+
+    state.current.itemMap[colorId] = node
+    if (props.onClick) {
+      state.current.clickEventMap[colorId] = props.onClick
+    }
+    if (props.onPointerMove) {
+      state.current.pointerMoveEventMap[colorId] = props.onPointerMove
+    }
+    if (props.onPointerEnter) {
+      state.current.pointerEnterEventMap[colorId] = props.onPointerEnter
+    }
+    if (props.onPointerLeave) {
+      state.current.pointerLeaveEventMap[colorId] = props.onPointerLeave
     }
 
     return () => {
@@ -128,14 +129,15 @@ export function useZdogPrimitive(primitive, children, props, ref) {
   }, [props])
 
   useLayoutEffect(() => {
-    if (ghostParent) {
-      ghostParent.addChild(ghost_node)
+    if (!ghostParent) return
+
+    ghostParent.addChild(ghost_node)
+    state.current.illu_ghost.updateGraph()
+
+    return () => {
+      ghostParent.removeChild(ghost_node)
+      ghostParent.updateFlatGraph()
       state.current.illu_ghost.updateGraph()
-      return () => {
-        ghostParent.removeChild(ghost_node)
-        ghostParent.updateFlatGraph()
-        state.current.illu_ghost.updateGraph()
-      }
     }
   }, [ghostParent])
 
