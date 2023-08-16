@@ -12,6 +12,8 @@ export const Illustration = React.memo(
     frameloop = 'always',
     dragRotate,
     onDragMove = () => {},
+    onDragStart = () => {},
+    onDragEnd = () => {},
     pointerEvents = false,
     ...rest
   }) => {
@@ -71,6 +73,8 @@ export const Illustration = React.memo(
           }
           onDragMove()
         },
+        onDragStart: onDragStart,
+        onDragEnd: onDragEnd,
         ...rest,
       })
       state.current.illu.addChild(scene)

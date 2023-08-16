@@ -29,13 +29,23 @@ ReactDOM.render(
 
 Coming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. react-zdog basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
 
-## Illustration
+# Illustration
 
-The `Illustration` object is your portal into zdog. It forwards unreserved properties to the internal Zdog.Illustration instance. The component auto adjusts to re-size changes and fills out the wrapping relative/absolute parent. 
+The `Illustration` object is your portal into zdog. It forwards unreserved properties to the internal Zdog.Illustration instance. The component auto adjusts to re-size changes and fills out the wrapping relative/absolute parent.
 
 ```jsx
-<Canvas element="svg" /> // Can be either 'svg' or 'canvas'
+<Illustration element="svg" /> // Can be either 'svg' or 'canvas'
 ```
+
+- `element`: Sets the graphics rendering DOM Element. Can be either 'svg' or 'canvas'. Default is "svg"
+- `frameloop`: Determins the render loop behavior, Can be either 'always' or 'demand'. default is 'always'.
+- `pointerEvents`: enables pointer events on zdog elements if set to true. Default is False.
+- `style`: styles for main renderer dom elemeent container.
+- `onDragStart`: callback on illustration's on drag start event listener
+- `onDragMove`: callback on illustration's on drag move event listener
+- `onDragEnd`: callback on illustration's on drag end event listener
+
+And all the other props you will pass will be attached to illustration object. So any other properties or methods that you wanna set on illustration can be passed as prop as it is.
 
 # Hooks
 
@@ -50,12 +60,8 @@ import { useRender } from 'react-zdog'
 
 function Spin({ children }) {
   const ref = useRef(undefined)
-  useRender(t => ref.current.rotate.y += 0.01)
-  return (
-    <Anchor ref={ref}>
-      {children}
-    </Anchor>
-  )
+  useRender(t => (ref.current.rotate.y += 0.01))
+  return <Anchor ref={ref}>{children}</Anchor>
 }
 ```
 
@@ -73,3 +79,76 @@ function MyComponent() {
     size,             // Current canvas size
   } = useZdog()
 ```
+
+### useInvalidate()
+
+Gives you access to function that updates the one scene frame on each call. It is useful only if you're setting `frameloop` props on _Illustration_ component as `demand`
+
+```jsx
+function MyComponent() {
+  const invalidate = useInvalidate()
+  const boxRef = useRef()
+  const rotate = () => {
+    boxRef.current.rotate.x += 0.03;
+    boxRef.current.rotate.y += 0.03; //this will update underlying javascript object
+    invalidate() //But you need to call invalidate to render the changes on screen
+  }
+
+  return (
+    <Box
+      ref={boxRef}
+      {/* ...other props */}
+    />
+  )}
+```
+
+# Pointer Events
+
+React-zdog supports the Click, Pointer Move, Pointer Enter and Pointer Leave events on Zdog elemets.
+To use pointer events just enable the pointer events by setting `pointerEvents` prop to `true` on `Illustration` component.
+
+```jsx
+<Illustration pointerEvents={true} />
+```
+
+and use onClick, onPointerMove, onPointerEnter and OnPointerLeave on any zdog element.
+
+```jsx
+const onClick = (e, ele) => {
+  //runs when user clicks on box
+}
+
+const onPointerMove = (e, ele) => {
+  //runs when user moves pointer over box
+}
+
+const onPointerEnter = (e, ele) => {
+  //runs when user's pointer enters the box
+}
+
+const onPointerLeave = (e, ele) => {
+  //runs when user's pointer leaves the box
+}
+
+return (
+  <Box
+    onClick={onClick}
+    onPointerMove={onPointerMove}
+    onPointerEnter={onPointerEnter}
+    onPointerLeave={onPointerLeave}
+  />
+)
+```
+
+<div style="background-color: #ffffcc; padding: 10px; border: 1px solid #ffcc00; border-radius: 5px; color: black ">
+    <strong>Note</strong>: zdog dosen't support pointer events out of the box, it is react-zdog specific feature which is added recently and was tested, but if you find some issue with events (and with any other thing) please open a issue and let us know.
+</div>
+
+## Roadmap
+
+- Create more Examples
+- add More events support
+
+# Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
