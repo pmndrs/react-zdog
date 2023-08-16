@@ -144,7 +144,7 @@ return (
     <strong>Note</strong>: zdog dosen't support pointer events out of the box, it is react-zdog specific feature which is added recently and was tested, but if you find some issue with events (and with any other thing) please open a issue and let us know.
 </div>
 
-## Examples
+# Examples
 
 <details>
   <summary>Basic Example</summary>
@@ -314,7 +314,7 @@ export default App
 
 </details>
 
-## Roadmap
+# Roadmap
 
 - Create more Examples
 - add More events support
@@ -322,7 +322,3 @@ export default App
 # Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-```
-
-```
