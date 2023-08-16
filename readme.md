@@ -144,6 +144,176 @@ return (
     <strong>Note</strong>: zdog dosen't support pointer events out of the box, it is react-zdog specific feature which is added recently and was tested, but if you find some issue with events (and with any other thing) please open a issue and let us know.
 </div>
 
+## Examples
+
+<details>
+  <summary>Basic Example</summary>
+  
+  ```jsx
+  import React, { useRef, useEffect } from 'react';
+  import { Illustration, useRender, useInvalidate, Box } from 'react-zdog';
+
+// RotatingCube Component
+const RotatingCube = () => {
+const boxRef = useRef();
+
+// Use the useRender hook to continuously update the rotation
+useRender(() => {
+if (boxRef.current) {
+boxRef.current.rotate.x += 0.03;
+boxRef.current.rotate.y += 0.03;
+}
+});
+
+      return (
+        <Box
+          ref={boxRef}
+          width={50}
+          height={50}
+          depth={50}
+          color="#E44"
+          leftFace="#4E4"
+          rightFace="#44E"
+          topFace="#EE4"
+          bottomFace="#4EE"
+        />
+      );
+
+};
+
+// App Component
+const App = () => {
+return (
+<Illustration zoom={4}>
+<RotatingCube />
+</Illustration>
+);
+};
+
+export default App;
+
+````
+</details>
+
+<details>
+  <summary>Pointer Events Example</summary>
+
+  ```jsx
+  import React, { useRef, useState } from 'react';
+import { Illustration, useRender, Box } from 'react-zdog';
+
+// InteractiveCube Component
+const InteractiveCube = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const colorsBeforeClick = {
+    main: "#E44",
+    left: "#4E4",
+    right: "#44E",
+    top: "#EE4",
+    bottom: "#4EE"
+  };
+
+  const colorsAfterClick = {
+    main: "#FF5733",
+    left: "#33FF57",
+    right: "#3357FF",
+    top: "#FF33A1",
+    bottom: "#A133FF"
+  };
+
+  const currentColors = isClicked ? colorsAfterClick : colorsBeforeClick;
+
+  const handleBoxClick = () => {
+    setIsClicked(!isClicked);
+  };
+
+
+  return (
+    <Box
+      width={50}
+      height={50}
+      depth={50}
+      color={currentColors.main}
+      leftFace={currentColors.left}
+      rightFace={currentColors.right}
+      topFace={currentColors.top}
+      bottomFace={currentColors.bottom}
+      onClick={handleBoxClick}
+    />
+  );
+};
+
+// App Component
+const App = () => {
+  return (
+    <Illustration pointerEvents={true} zoom={4}>
+      <InteractiveCube />
+    </Illustration>
+  );
+};
+
+export default App;
+
+````
+
+</details>
+
+<details>
+  <summary>On Demand rendering Example</summary>
+
+```jsx
+import React, { useRef, useEffect } from 'react'
+import { Illustration, useInvalidate, Box } from 'react-zdog'
+
+// RotatingCube Component
+const RotatingCube = () => {
+  const boxRef = useRef()
+  const invalidate = useInvalidate()
+
+  useEffect(() => {
+    const animate = () => {
+      if (boxRef.current) {
+        boxRef.current.rotate.x += 0.03
+        boxRef.current.rotate.y += 0.03
+        invalidate() // Manually trigger a render
+      }
+    }
+
+    const intervalId = setInterval(animate, 1000) // only renders the scene graph one a second instead of 60 times per second
+
+    return () => intervalId && clearInterval(intervalId)
+  }, [invalidate])
+
+  return (
+    <Box
+      ref={boxRef}
+      width={50}
+      height={50}
+      depth={50}
+      color="#E44"
+      leftFace="#4E4"
+      rightFace="#44E"
+      topFace="#EE4"
+      bottomFace="#4EE"
+    />
+  )
+}
+
+// App Component
+const App = () => {
+  return (
+    <Illustration zoom={4} frameloop="demand">
+      <RotatingCube />
+    </Illustration>
+  )
+}
+
+export default App
+```
+
+</details>
+
 ## Roadmap
 
 - Create more Examples
@@ -152,3 +322,7 @@ return (
 # Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+```
+
+```
