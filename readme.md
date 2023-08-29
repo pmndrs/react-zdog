@@ -13,21 +13,17 @@ react-zdog is a declarative abstraction of [zdog](https://zzz.dog/), a cute pseu
 # How it looks like
 
 ```jsx
-import ReactDOM from 'react-dom'
-import React from 'react'
-import { Illustration, Shape } from 'react-zdog'
+import ReactDOM from "react-dom";
+import React from "react";
+import { Illustration, Shape } from "react-zdog";
 
 ReactDOM.render(
   <Illustration zoom={8}>
     <Shape stroke={20} color="lightblue" rotate={{ x: Math.PI }} />
   </Illustration>,
-  document.getElementById('root')
-)
+  document.getElementById("root")
+);
 ```
-
-# API
-
-Coming soon ... For now, this little demo [here](https://codesandbox.io/s/nervous-feather-vk9uh) has it all covered. react-zdog basically forwards props to zdog primitives, anything you can do in zdog is possible here, too.
 
 # Illustration
 
@@ -56,12 +52,12 @@ All hooks can only be used _inside_ the Illustration element because they rely o
 If you're running effects that need to get updated every frame, useRender gives you access to the render-loop.
 
 ```jsx
-import { useRender } from 'react-zdog'
+import { useRender } from "react-zdog";
 
 function Spin({ children }) {
-  const ref = useRef(undefined)
-  useRender(t => (ref.current.rotate.y += 0.01))
-  return <Anchor ref={ref}>{children}</Anchor>
+  const ref = useRef(undefined);
+  useRender((t) => (ref.current.rotate.y += 0.01));
+  return <Anchor ref={ref}>{children}</Anchor>;
 }
 ```
 
@@ -116,19 +112,19 @@ and use onClick, onPointerMove, onPointerEnter and OnPointerLeave on any zdog el
 ```jsx
 const onClick = (e, ele) => {
   //runs when user clicks on box
-}
+};
 
 const onPointerMove = (e, ele) => {
   //runs when user moves pointer over box
-}
+};
 
 const onPointerEnter = (e, ele) => {
   //runs when user's pointer enters the box
-}
+};
 
 const onPointerLeave = (e, ele) => {
   //runs when user's pointer leaves the box
-}
+};
 
 return (
   <Box
@@ -137,7 +133,7 @@ return (
     onPointerEnter={onPointerEnter}
     onPointerLeave={onPointerLeave}
   />
-)
+);
 ```
 
 <div style="background-color: #ffffcc; padding: 10px; border: 1px solid #ffcc00; border-radius: 5px; color: black ">
@@ -263,27 +259,27 @@ export default App;
   <summary>On Demand rendering Example</summary>
 
 ```jsx
-import React, { useRef, useEffect } from 'react'
-import { Illustration, useInvalidate, Box } from 'react-zdog'
+import React, { useRef, useEffect } from "react";
+import { Illustration, useInvalidate, Box } from "react-zdog";
 
 // RotatingCube Component
 const RotatingCube = () => {
-  const boxRef = useRef()
-  const invalidate = useInvalidate()
+  const boxRef = useRef();
+  const invalidate = useInvalidate();
 
   useEffect(() => {
     const animate = () => {
       if (boxRef.current) {
-        boxRef.current.rotate.x += 0.03
-        boxRef.current.rotate.y += 0.03
-        invalidate() // Manually trigger a render
+        boxRef.current.rotate.x += 0.03;
+        boxRef.current.rotate.y += 0.03;
+        invalidate(); // Manually trigger a render
       }
-    }
+    };
 
-    const intervalId = setInterval(animate, 1000) // only renders the scene graph one a second instead of 60 times per second
+    const intervalId = setInterval(animate, 1000); // only renders the scene graph one a second instead of 60 times per second
 
-    return () => intervalId && clearInterval(intervalId)
-  }, [invalidate])
+    return () => intervalId && clearInterval(intervalId);
+  }, [invalidate]);
 
   return (
     <Box
@@ -297,8 +293,8 @@ const RotatingCube = () => {
       topFace="#EE4"
       bottomFace="#4EE"
     />
-  )
-}
+  );
+};
 
 // App Component
 const App = () => {
@@ -306,10 +302,10 @@ const App = () => {
     <Illustration zoom={4} frameloop="demand">
       <RotatingCube />
     </Illustration>
-  )
-}
+  );
+};
 
-export default App
+export default App;
 ```
 
 </details>

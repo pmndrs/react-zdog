@@ -27,8 +27,8 @@ body {
   position: fixed;
   overflow: hidden;
   overscroll-behavior-y: none;
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto,
-    segoe ui, arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+    helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
   color: black;
   -webkit-font-smoothing: antialiased;
 }
@@ -42,7 +42,7 @@ body {
 }
 
 span.header {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 700;
   position: absolute;
   display: inline-block;
@@ -56,7 +56,7 @@ span.header {
 }
 
 span.header-left {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 700;
   position: absolute;
   display: inline-block;
@@ -69,7 +69,7 @@ span.header-left {
 }
 
 div.header-major {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 700;
   position: absolute;
   top: 0;
@@ -97,8 +97,9 @@ div.header-major > span {
   }
 }
 
-a, .main > span {
-  font-family: 'Josefin Sans', sans-serif;
+a,
+.main > span {
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 400;
   font-size: 18px;
   color: inherit;
@@ -108,7 +109,9 @@ a, .main > span {
   z-index: 1;
 }
 
-.main > span { z-index: 0; }
+.main > span {
+  z-index: 0;
+}
 
 .main > span > a {
   position: unset;
@@ -174,7 +177,7 @@ canvas {
 }
 
 span.middle {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   font-weight: 700;
   position: absolute;
   display: inline-block;
